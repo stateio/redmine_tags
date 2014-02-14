@@ -37,12 +37,25 @@ module RedmineTags
         context[:issue].save
       end
 
+      # TODO: add the ability to optionally turn new tag validation /
+      # find a better place for this.
+      #
+      # prevent tags that don't already exist from being created.
+      def validate_tags(str)
+        tags = str.split(",")
+        tags.select do |tstr|
+          ActsAsTaggableOn::Tag.find_by_name(tstr)
+        end.join(",")
+      end
+
       def save_tags_to_issue(context, create_journal)
         params = context[:params]
 
         if params && params[:issue] && !params[:issue][:tag_list].nil?
+          issue_tags = validate_tags(params[:issue][:tag_list])
+          
           old_tags = context[:issue].tag_list.to_s
-          context[:issue].tag_list = params[:issue][:tag_list]
+          context[:issue].tag_list = issue_tags
           new_tags = context[:issue].tag_list.to_s
 
           # without this when reload called in Issue#save all changes will be gone :(
