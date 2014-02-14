@@ -34,7 +34,6 @@ module RedmineTags
         def issue_tags
           @name = params[:q].to_s
           @tags = Issue.available_tags({
-            :project => @project,
             :name_like => @name
           })
           render :layout => false, :partial => 'tag_list'
@@ -43,7 +42,6 @@ module RedmineTags
         def wiki_tags
           @name = params[:q].to_s
           @tags = WikiPage.available_tags({
-            :project => @project,
             :name_like => @name
           })
           render :layout => false, :partial => 'tag_list'
